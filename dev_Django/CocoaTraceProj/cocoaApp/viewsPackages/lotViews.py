@@ -4,6 +4,11 @@ from rest_framework.views import APIView
 from cocoaApp.models import Lot
 from cocoaApp.serializer import LotSerializer
 
+class LotRetrieveView(generics.RetrieveAPIView):
+    queryset = Lot.objects.all()
+    serializer_class = LotSerializer
+    lookup_field = 'id'
+
 class LotCreateView(APIView):
     def post(self, request):
         serializer = LotSerializer(data=request.data)

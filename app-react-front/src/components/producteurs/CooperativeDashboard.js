@@ -1,39 +1,43 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import AjouterCooperative from "./AjouterCooperative";
 import TableData from "../TableData";
+import L, { Icon } from 'leaflet';
+import { parseWkt } from 'wkt';
+
 
 // import React from 'react';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 
 const CooperativeDashboard = () => {
 
-    const [acheteurAttribut, setAcheteurAttribut] = useState(["nom", "prenom", "type_acheteur", "numero_cni", "numero_oncc", "contact", "filiale", "coordonnees_geographiques"])
-    const [sacAttribut, setSacAttribut] = useState(["code_qr", "quantite", "date_creation", "date_modification", "acheteur"])
-    const [producteurAttribut, setProducteurAttribut] = useState(["identifiant_unique", "nom", "prenom", "date_naissance", "lieu_naissance", "genre", "numero_cni", "identifiant_fodecc_cicc", "numero_telephone", "region", "departement", "arrondissement", "village"])
-    const [parcelleAttribut, setParcelleAttribut] = useState(["numero_titre_foncier", "statut", "coordonnees_polygonales", "superficie", "nombre_arbres", "age_moyen_arbres", "producteur"])
-    const [lotAttribut, setLotAttribut] = useState(["numero_lot", "quantite", "type_commercial", "taux_humidite", "date_recolt", "date_livraison","cooperative", "producteur", "sac", "parcelle"])
-    const [cooperativeProducteurAttribut, setCooperativeProducteurAttribut] = useState(["numero_lot", "quantite", "type_commercial", "taux_humidite", "date_recolt", "date_livraison","cooperative", "producteur", "sac", "parcelle"])
+    const [acheteurAttribut, setAcheteurAttribut] = useState([["nom", "text"], ["prenom", "text"], ["type_acheteur", "text"], ["numero_cni", "text"], ["numero_oncc", "text"], ["contact", "text"], ["filiale", "text"], ["coordonnees_geographiques", "text"]])
+    const [sacAttribut, setSacAttribut] = useState([["code_qr", "text"], ["quantite", "number"], ["date_creation", "date"], ["date_modification", "date"], ["acheteur", "number"]])
+    const [producteurAttribut, setProducteurAttribut] = useState([["id_producteur", "text"], ["nom", "text"], ["prenom", "text"], ["date_naissance", "date"], ["lieu_naissance", "text"], ["genre", "text"], ["numero_cni", "text"], ["identifiant_fodecc_cicc", "text"], ["numero_telephone", "text"], ["tel_second", "text"], ["an_enreg", "text"], ["residence", "text"], ["autre_cooperative", "text"], ["cooperative", "text"]])
+    const [parcelleAttribut, setParcelleAttribut] = useState([["numero_titre_foncier", "text"], ["statut", "text"], ["id_parcelle", "text"], ["superficie", "num"], ["nombre_arbres", "num"], ["age_moyen_arbres", "num"], ["producteur", "num"], ["geometrie", "text"], ["type_culture", "num"], ["an_creation", "num"], ["arrondisement", "text"], ["departement", "text"], ["description", "text"], ["longueur", "num"], ["region", "text"], ["village", "text"], ["voie_eau", "text"], ["url", "text"], ["url_carte", "text"]])
+    const [lotAttribut, setLotAttribut] = useState([["numero_lot", "text"], ["quantite", "number"], ["type_commercial", "text"], ["taux_humidite", "number"], ["date_recolt", "date"], ["date_livraison", "date"],["cooperative", "number"], ["producteur", "num"], ["sac", "number"], ["parcelle", "number"]])
+    
+    const [cooperativeProducteurAttribut, setCooperativeProducteurAttribut] = useState([["date_arriver_producteur", "number"], ["cooperative", "number"], ["producteur", "number"], ["idcoop", "text"]])
 
 
 
     const [champForm, setChampForm] = useState(producteurAttribut)
     const modifChampForm = () =>{
-        if (data.menuPath === "lot") {
+        if (menuPath == "lot") {
             setChampForm(lotAttribut);
-        } else if (data.menuPath === "sac") {
+        } else if (menuPath == "sac") {
             setChampForm(sacAttribut);
-        } else if (data.menuPath === "parcelle") {
+        } else if (menuPath == "parcelle") {
             setChampForm(parcelleAttribut);
-        } else if(data.menuPath === "acheteur"){
+        } else if(menuPath == "acheteur"){
             setChampForm(acheteurAttribut);
         } else{
-            setChampForm(["nom", "identifiant unique", "region", "village", "Action"]   );
+            setChampForm(producteurAttribut);
         }
     }
 
 
-    const [attribut, setAttribut] =  useState(["nom", "identifiant unique", "region", "village", "Action"])
+    const [attribut, setAttribut] =  useState(["nom", "id_producteur", "identifiant_fodecc_cicc", "genre", "Action"])
 
 
     const [show, setShow] = useState(false);
@@ -115,6 +119,11 @@ const CooperativeDashboard = () => {
     const imageUrl = 'https://cacaotrace.s3.eu-north-1.amazonaws.com/CARTES/ADJU165ZU_1.png';
 
 
+
+    const handleSubmit = (data) => {
+        console.log('Données reçues du serveur :', data);
+      };
+
     return (
         <div className="row main-dashboard-producteur">
             
@@ -125,11 +134,11 @@ const CooperativeDashboard = () => {
                 <div className=" row lt-br-menu">
                     <ul className="">
                         <li className=" text-center">Dashboard</li>
-                        <li className="" onClick={()=>{setAttribut(["nom", "identifiant unique", "region", "village", "Action"]); setMenuPath("producteur");}}>Mes Producteurs</li>
-                        <li className="" onClick={()=>{setAttribut(["numero titre foncier", "statut", "superficie", "nombre arbres", "Action"]); setMenuPath("parcelle");}}>Mes Parcelles</li>
-                        <li className="" onClick={()=>{setAttribut(["numero lot", "quantite", "type commercial", "taux humidite", "Action"]); setMenuPath("lot");}}>Mes Lots</li>
-                        <li className="" onClick={()=>{setAttribut(["quantite", "date creation", "date modification", "acheteur", "Action"]); setMenuPath("sac");}}>Mes Sacs</li>
-                        <li className="" onClick={()=>{setAttribut(["nom", "contact", "filiale", "type acheteur", "Action"]); setMenuPath("acheteur");}}>Mes Acheteurs</li>
+                        <li className="" onClick={()=>{setAttribut(["nom", "id_producteur", "telephone", "residence", "Action"]); setMenuPath("producteur");}}> <img src="/media/icon/2267620.svg"  style={{ width: 30, height: 30 }} /> <span >Mes Producteurs</span>  </li>
+                        <li className="" onClick={()=>{setAttribut(["id_parcelle", "statut", "superficie", "producteur_id", "Action"]); setMenuPath("parcelle");}}> <img src="/media/icon/303713.svg" style={{ width: 30, height: 30 }} />  <span >Mes Parcelles</span></li>
+                        <li className="" onClick={()=>{setAttribut(["numero lot", "quantite", "type commercial", "taux humidite", "Action"]); setMenuPath("lot");}}><img src="/media/icon/42900.svg" style={{ width: 30, height: 30 }} /> <span>Mes Lots</span></li>
+                        <li className="" onClick={()=>{setAttribut(["quantite", "date creation", "date modification", "acheteur", "Action"]); setMenuPath("sac");}}><img src="/media/icon/309849.svg" style={{ width: 30, height: 30 }} /> <span>Mes Sacs</span></li>
+                        <li className="" onClick={()=>{setAttribut(["nom", "contact", "filiale", "type acheteur", "Action"]); setMenuPath("acheteur");}}><img src="/media/icon/2847404.svg" style={{ width: 30, height: 30 }} /> <span>Mes Acheteurs</span> </li>
                         <li className="lt-br-login">logout</li>
                     </ul>
                 </div>
@@ -148,8 +157,8 @@ const CooperativeDashboard = () => {
                         </div>
                     </div>
                     <div className=""> <span>23</span> <p>Nombre de Parcelles</p>  </div>
-                    <div className=""> <span>45</span> <p>Nombre de Lots</p> </div>
-                    <div className=""> <span>19</span> <p>Nombre de Sacs</p></div>
+                    <div className=""> <span>0</span> <p>Nombre de Lots</p> </div>
+                    <div className=""> <span>0</span> <p>Nombre de Sacs</p></div>
                 </div>
                 <div className="m-bl-body row">
                     
@@ -159,11 +168,16 @@ const CooperativeDashboard = () => {
                             // item={data}
                             champForm={champForm}
                             menuPath={menuPath}
+                            onSubmit={handleSubmit}
                         />
                     </div>
                     <div className=" col m-bl-body-view-data">
+                        <div className="row h-25 justify-content-center">
+                            {/* <img className=" img-circle m-2" style={{ width:200, height:100, }} src="/media/Animation - 1729041652886.gif" /> */}
 
-                        <img src={imageUrl} alt="Mon image" style={{ width: 400, height: 500 }} />
+                        </div>
+                        <div className="row h-75 "></div>
+
                     </div>
                 </div>
             </div>

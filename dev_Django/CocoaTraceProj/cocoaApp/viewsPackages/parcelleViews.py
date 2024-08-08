@@ -17,6 +17,7 @@ class ParcelleListView(generics.ListAPIView):
     serializer_class = ParcelleSerializer
     
     
+    
 class ParcelleByProducteurView(generics.ListAPIView):
     serializer_class = ParcelleSerializer
 
@@ -35,3 +36,9 @@ class ParcelleDeleteView(generics.DestroyAPIView):
     queryset = Parcelle.objects.all()
     serializer_class = ParcelleSerializer
     lookup_field = 'id'  # Utiliser l'ID du Parcelle pour les opérations
+    
+
+class ParcelleRetrieveView(generics.RetrieveAPIView):
+    queryset = Parcelle.objects.all()
+    serializer_class = ParcelleSerializer
+    lookup_field = 'id'

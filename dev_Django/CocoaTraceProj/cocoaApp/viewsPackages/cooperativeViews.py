@@ -4,6 +4,13 @@ from rest_framework.views import APIView
 from cocoaApp.models import Cooperative
 from cocoaApp.serializer import CooperativeSerializer
 
+
+class CooperativeRetrieveView(generics.RetrieveAPIView):
+    queryset = Cooperative.objects.all()
+    serializer_class = CooperativeSerializer
+    lookup_field = 'id'
+
+
 class CooperativeCreateView(APIView):
     def post(self, request):
         serializer = CooperativeSerializer(data=request.data)

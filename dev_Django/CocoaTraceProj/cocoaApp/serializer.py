@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Acheteur, Sac, Producteur, Parcelle, Cooperative, Lot, CooperativeProducteur, Utilisateur
+from .models import Acheteur, Sac, Producteur, Parcelle, Cooperative, Lot, CooperativeProducteur, User
 
         
 class AcheteurSerializer(serializers.ModelSerializer):
@@ -35,7 +35,12 @@ class CooperativeProducteurSerializer(serializers.ModelSerializer):
         model = CooperativeProducteur
         fields = '__all__'
         
-class UtilisateurSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Utilisateur
-        fields = ['nom', 'email', 'mot_de_passe']
+        model = User
+        fields  = ('username', 'email', 'password')  
+  # Assurez-vous que ces champs existent dans votre modèle
+        extra_kwargs = {'password': {'write_only': True}}
+
+
+        

@@ -1,7 +1,12 @@
 from django.db import models
 from django.contrib.gis.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 # Create your models here.
+
+
+class User(AbstractUser):
+    groups = models.ManyToManyField(Group,related_name='custom_user_set',  )
+    user_permissions = models.ManyToManyField(Permission, related_name='custom_user_set')
 
 class Acheteur(models.Model):
     nom = models.CharField(max_length=200, null=True)
@@ -46,7 +51,7 @@ class Producteur(models.Model):
     id_producteur = models.CharField(max_length=500, null=True)
     nom = models.CharField(max_length=200, null=True)
     prenom = models.CharField(max_length=200, null=True)
-    date_naissance = models.DateField()
+    date_naissance = models.CharField(max_length=200, null=True)
     lieu_naissance = models.CharField(max_length=200, null=True)
     genre = models.CharField(max_length=200, null=True)
     numero_cni = models.CharField(max_length=200, null=True)
@@ -58,6 +63,7 @@ class Producteur(models.Model):
     autre_cooperative = models.CharField(max_length=200, null=True)
     # arrondissement = models.CharField(max_length=200, null=True)
     residence = models.CharField(max_length=200, null=True)
+    coop_id = models.CharField(max_length=200, null=True)
     
     
 
@@ -73,23 +79,24 @@ class Producteur(models.Model):
 class Parcelle(models.Model):
     '''Model definition for Parcelle.'''
     numero_titre_foncier = models.CharField(max_length=200, null=True)
-    statut = models.CharField(max_length=200, null=False)
-    id_parcelle = models.CharField(max_length=200, null=False)
-    superficie = models.FloatField(null=False)
+    statut = models.CharField(max_length=200, null=True)
+    id_parcelle = models.CharField(max_length=200, null=True)
+    superficie = models.FloatField(null=True)
     nombre_arbres = models.IntegerField()
     age_moyen_arbres = models.FloatField()
-    producteur_id = models.CharField(max_length=255,null=False)
-    geometrie = models.MultiPolygonField(srid=4326, null=False)  # MultiPolygonField pour le type de géométrie
-    id_producteur = models.CharField(max_length=200, null=False)
-    type_culture = models.CharField(max_length=200, null=False, verbose_name="Type_culture")  # Utilisez des noms de champs en anglais pour éviter des problèmes de casse
-    an_creation = models.FloatField(null=False)
-    arrondisement = models.CharField(max_length=200, null=False)
-    departement = models.CharField(max_length=200, null=False)
+    # producteur_id = models.CharField(max_length=255,null=True)
+    producteur = models.ForeignKey(Producteur, related_name='producteurParcelle', on_delete=models.CASCADE,  null=True)
+    geometrie = models.MultiPolygonField(srid=4326, null=True)  # MultiPolygonField pour le type de géométrie
+    id_producteur = models.CharField(max_length=200, null=True)
+    type_culture = models.CharField(max_length=200, null=True, verbose_name="Type_culture")  # Utilisez des noms de champs en anglais pour éviter des problèmes de casse
+    an_creation = models.FloatField(null=True)
+    arrondisement = models.CharField(max_length=200, null=True)
+    departement = models.CharField(max_length=200, null=True)
     description = models.CharField(max_length=200, null=True)
-    longueur = models.FloatField(null=False)
-    region = models.CharField(max_length=200,  null=False)
-    village = models.CharField(max_length=200,  null=False)
-    voie_eau = models.CharField(max_length=200,  null=False)
+    longueur = models.FloatField(null=True)
+    region = models.CharField(max_length=200,  null=True)
+    village = models.CharField(max_length=200,  null=True)
+    voie_eau = models.CharField(max_length=200,  null=True)
     url = models.TextField()
     url_carte = models.CharField(max_length=200, null=True)
     class Meta:
@@ -117,7 +124,7 @@ class Cooperative(models.Model):
     arrondissement = models.CharField(max_length=200, null=True)
     village = models.CharField(max_length=200, null=True)
     coordonnees_gps = models.CharField(max_length=200, null=True)
-    # identifiant_unique = models.CharField(max_length=500, null=True)
+    idcoop = models.CharField(max_length=500, null=True)
     # mot_pass = models.CharField(max_length=200, null=True)
 
     class Meta:
@@ -138,10 +145,10 @@ class Lot(models.Model):
     taux_humidite = models.FloatField()
     date_recolt = models.DateField()
     date_livraison = models.DateField()
-    cooperative = models.ForeignKey(Cooperative, related_name='lotCooperative', on_delete=models.CASCADE)
-    producteur = models.ForeignKey(Producteur, related_name='lotProducteur', on_delete=models.CASCADE)
-    sac = models.ForeignKey(Sac, related_name='lotSac', on_delete=models.CASCADE)
-    parcelle = models.ForeignKey(Parcelle, related_name='lotParcelle', on_delete=models.CASCADE)
+    cooperative = models.ForeignKey(Cooperative, related_name='lotCooperative', on_delete=models.CASCADE,  null=True)
+    producteur = models.ForeignKey(Producteur, related_name='lotProducteur', on_delete=models.CASCADE,  null=True)
+    sac = models.ForeignKey(Sac, related_name='lotSac', on_delete=models.CASCADE,  null=True)
+    parcelle = models.ForeignKey(Parcelle, related_name='lotParcelle', on_delete=models.CASCADE,  null=True)
 
     class Meta:
         '''Meta definition for lot.'''

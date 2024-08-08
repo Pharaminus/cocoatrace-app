@@ -4,6 +4,12 @@ from rest_framework.views import APIView
 from cocoaApp.models import Acheteur
 from cocoaApp.serializer import AcheteurSerializer
 
+
+class AcheteurRetrieveView(generics.RetrieveAPIView):
+    queryset = Acheteur.objects.all()
+    serializer_class = AcheteurSerializer
+    lookup_field = 'id'
+
 class AcheteurCreateView(APIView):
     def post(self, request):
         serializer = AcheteurSerializer(data=request.data)

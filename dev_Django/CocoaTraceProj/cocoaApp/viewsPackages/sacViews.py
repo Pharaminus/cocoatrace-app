@@ -35,3 +35,20 @@ class SacDeleteView(generics.DestroyAPIView):
     queryset = Sac.objects.all()
     serializer_class = SacSerializer
     lookup_field = 'id'  # Utiliser l'ID du Sac pour les opérations
+    
+    
+class SacGet(APIView):
+    def get(self, request, pk):
+        try:
+            element = Sac.objects.get(pk=pk)
+            serializer = SacSerializer(element)
+            return Response(serializer.data)
+        except Sac.DoesNotExist:
+            return Response({'detail': 'Not found.'}, status=404)
+        
+class SacRetrieveView(generics.RetrieveAPIView):
+    queryset = Sac.objects.all()
+    serializer_class = SacSerializer
+    lookup_field = 'id'
+
+        

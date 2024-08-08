@@ -35,3 +35,8 @@ class ProducteurDeleteView(generics.DestroyAPIView):
     queryset = Producteur.objects.all()
     serializer_class = ProducteurSerializer
     lookup_field = 'id'  # Utiliser l'ID du producteur pour les opérations
+    
+class ProducteurRetrieveView(generics.RetrieveAPIView):
+    queryset = Producteur.objects.all()
+    serializer_class = ProducteurSerializer
+    lookup_field = 'id'

@@ -13,6 +13,44 @@ const ModifierCooperative = (data) => {
         setShow(true);
     };
 
+    
+    const [formData, setFormData] = useState({});
+
+    const handleChange = (event) => {
+        setFormData({
+        ...formData,
+        [event.target.name]: event.target.value,
+        });
+    };
+
+
+
+    const handleSubmit  = async (event) => {
+        // event.preventDefault(); 
+        const url = "http://127.0.0.1:8000/cocoa/"+ data.menuPath +"/"+ data.item.id +"/";
+        
+        try {
+        const response = await fetch(url,  
+    {
+            method: 'PUT',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+            console.log('Données envoyées avec succès  !');
+            // Vous pouvez ici rediriger l'utilisateur, afficher un message de succès, etc.
+        } else {
+            console.error('Erreur lors de l\'envoi des données');
+        }
+        } catch (error) {
+        console.error('Erreur:', error);
+        }
+    };
+    
+
     return (
         <div className=" w-100">
 
@@ -24,12 +62,14 @@ const ModifierCooperative = (data) => {
                             <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body h-100">
-                            <form class="row g-3">
+                            <form class="row g-3" onSubmit={handleSubmit} >
                                 {
                                     data.champForm.map(champ => (
+                                        
                                         <div class="col-md-4">
-                                            <label for="validationServer01" class="form-label">{champ}</label>
-                                            <input type="text" name="nom" class="form-control " value={data.item[champ]} id="validationServer01" required />
+                                            <label for="validationServer01" class="form-label">{champ[0]}</label>
+                                            
+                                            <input type={champ[1]} name={champ[0]} class="form-control "    value={formData[champ[0]]} onChange={handleChange} disabled={false}  id="validationServer01"  />
                                             <div class="valid-feedback">
                                                 Looks good!
                                             </div>
@@ -53,4 +93,6 @@ const ModifierCooperative = (data) => {
 }
 
 export default ModifierCooperative
+
+
 
