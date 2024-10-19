@@ -1,10 +1,33 @@
 
-import ModifierCooperative from "../components/producteurs/ModifierCooperative";
+// import ModifierCooperative from "../components/producteurs/ModifierCooperative";
 import React, { useState, createContext } from 'react';
 
 
 const RigthLateraleData = ({champForm, menuPath, dataItem }) => {
     
+    const [imagePath, setImagePath] = useState("/media/icon/2267620.svg");
+
+    const changeImagePath = (menuPath) =>{
+        if(menuPath == "producteur"){
+            return "/media/icon/2267620.svg";
+        }
+        else if(menuPath == "parcelle"){
+            return "/media/icon/3219616.svg";
+    
+        }
+        else if(menuPath == "sac"){
+            return "/media/icon/309849.svg";
+    
+        }
+        else if(menuPath == "lot"){
+            return "/media/icon/42900.svg";
+    
+        }
+        else{
+            return "/media/icon/2847404.svg";
+    
+        }
+    }
     
 
     return(
@@ -15,7 +38,7 @@ const RigthLateraleData = ({champForm, menuPath, dataItem }) => {
             <div className=" row align-item-center">
                 
                 <img className=" img-circle ms-5 ps-5" style={{ width:300, height:200, }}
-                 src={`${menuPath == "pppppppp "/media/icon/2847404.svg"}`} />
+                 src={changeImagePath(menuPath)} />
             </div>
             <div className="row">
                 <div className="col-6"> <button className="btn btn-warning w-100">Detail</button> </div>
